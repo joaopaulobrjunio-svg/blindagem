@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blindagem: o jogo</title>
+<style>
+:root{--bg:#f4f6fb;--card:#ffffff;--tx:#14213d;--mu:#5b6785;--bd:#d5dbea;--btn:#1d3fa8;--btnt:#ffffff;--ac:#c2410c;--ok:#1a7f4b;--no:#b42318;--okb:#e3f5ec;--nob:#fde8e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b3d;--card:#182752;--tx:#f4f6fb;--mu:#a9b5d3;--bd:#2c3d72;--btn:#f26a21;--btnt:#0f1b3d;--ac:#ff8a4c;--ok:#4cd08a;--no:#ff8f82;--okb:#12382f;--nob:#4a1f27}}
+:root[data-theme="dark"]{--bg:#0f1b3d;--card:#182752;--tx:#f4f6fb;--mu:#a9b5d3;--bd:#2c3d72;--btn:#f26a21;--btnt:#0f1b3d;--ac:#ff8a4c;--ok:#4cd08a;--no:#ff8f82;--okb:#12382f;--nob:#4a1f27}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45;min-height:100vh}
+#app{max-width:560px;margin:0 auto;padding:24px 20px 48px;display:flex;flex-direction:column;gap:18px}
+h1{font-size:34px;line-height:1.1;margin:0}h2{font-size:26px;line-height:1.15;margin:0}
+p{margin:0;font-size:18px}.mu{color:var(--mu);font-size:15px}
+.bar{display:flex;gap:6px}.bar i{flex:1;height:6px;border-radius:3px;background:var(--bd)}.bar i.on{background:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.btn{font:inherit;font-size:18px;font-weight:600;padding:14px 18px;border-radius:12px;border:2px solid var(--btn);background:var(--btn);color:var(--btnt);cursor:pointer;width:100%}
+.btn.alt{background:transparent;color:var(--tx);border-color:var(--bd)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px}.row .btn{flex:1}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+input{font:inherit;font-size:18px;padding:12px;border-radius:10px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);width:100%}
+label{font-size:15px;color:var(--mu);display:block;margin-bottom:4px}
+.msg{font-size:22px;line-height:1.35}
+.fb{padding:14px;border-radius:12px;font-size:17px}.fb.ok{background:var(--okb);color:var(--ok)}.fb.no{background:var(--nob);color:var(--no)}
+.rule{display:flex;gap:10px;align-items:center;font-size:18px;padding:10px 12px;border-radius:10px;background:var(--nob);color:var(--no)}
+.rule.ok{background:var(--okb);color:var(--ok)}
+.chk{display:flex;gap:12px;align-items:center;text-align:left;font:inherit;font-size:18px;padding:16px;border-radius:12px;border:2px solid var(--no);background:var(--nob);color:var(--no);cursor:pointer;width:100%}
+.chk.ok{border-color:var(--ok);background:var(--okb);color:var(--ok)}
+.out{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;word-break:break-all;min-height:34px}
+.gauge{height:28px;border-radius:14px;background:var(--bd);overflow:hidden}.gauge b{display:block;height:100%;background:var(--ac);border-radius:14px}
+.big{font-size:72px;font-weight:700;line-height:1;color:var(--ac)}
+.ph{border-radius:18px;overflow:hidden;border:1px solid var(--bd);background:#efeae2;color:#111}
+.ph .hd{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#075e54;color:#fff}
+.ph .av{width:36px;height:36px;border-radius:50%;background:#8a97a8;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex:none}
+.ph .nm{font-size:16px;font-weight:600;line-height:1.15;word-break:break-all}.ph .sb{font-size:12px;opacity:.85}
+.ph .bd{padding:14px 12px 16px;display:flex;flex-direction:column;gap:8px}
+.ph .bb{align-self:flex-start;max-width:90%;background:#fff;color:#111;border-radius:0 12px 12px 12px;padding:8px 10px;font-size:17px;line-height:1.35;box-shadow:0 1px 1px rgba(0,0,0,.15)}
+.ph .tm{font-size:11px;color:#667;text-align:right;margin-top:2px}
+.ph .lk{color:#0b57d0;text-decoration:underline;word-break:break-all}
+.ph .wn{align-self:center;background:#fff3c4;color:#4a3b00;font-size:13px;padding:6px 10px;border-radius:8px;text-align:center}
+.ph.sms{background:#fff}.ph.sms .hd{background:#f2f2f7;color:#111;border-bottom:1px solid #d1d1d6}.ph.sms .bb{background:#e5e5ea;border-radius:16px;box-shadow:none}
+.ph.mail{background:#fff}.ph.mail .hd{background:#fff;color:#111;border-bottom:1px solid #e0e0e0}.ph.mail .bb{background:transparent;box-shadow:none;max-width:100%;padding:0}
+.ph.app{background:linear-gradient(#5b6b8c,#2c3a5a);padding:22px 12px}.ph.app .bb{background:rgba(255,255,255,.94);border-radius:16px;max-width:100%;font-size:16px}
+.au{display:flex;align-items:center;gap:8px;color:#075e54}.wv{display:flex;align-items:center;gap:2px;height:24px}.wv i{width:3px;background:#075e54;border-radius:2px}.au .t{font-size:13px;color:#667}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var LV=["Fácil","Médio","Difícil","Expert"];
+var M=[
+["URGENTE! Sua conta será bloqueada hoje. Clique aqui agora para evitar.","golpe","Urgência e link para clicar: golpistas apressam você."],
+["Pessoal, a aula de amanhã foi remarcada para as 19h.","verdade","Vem de um contato conhecido e não pede nada."],
+["Oi, aqui é do banco. Qual é a sua senha para confirmar sua identidade?","golpe","Banco nunca pede senha por mensagem."],
+["Crédito de R$ 8.000 pré-aprovado no seu nome! Para liberar, pague R$ 150 de seguro por Pix.","golpe","Crédito de verdade nunca cobra pagamento adiantado para liberar o dinheiro."],
+["Correios: seu objeto NB482916730BR saiu para entrega ao destinatário. Acompanhe em rastreamento.correios.com.br","verdade","Código no formato dos Correios, site oficial (.com.br) e nenhum pedido de dados ou pagamento. Na dúvida, digite o endereço você mesmo em vez de tocar no link."],
+["Oi pai, sou eu. Troquei de chip e este é meu número agora. Preciso pagar um boleto de R$ 480 e meu app do banco está bloqueado. Faz pra mim? Te devolvo hoje à noite.","golpe","Número novo + pedido de dinheiro com desculpa técnica. Ligue para o número antigo antes de pagar qualquer coisa."],
+["Seu código de verificação é 482913. Não compartilhe com ninguém. (Você acabou de tentar entrar no app.)","verdade","Foi você que pediu o código. O golpe seria alguém pedir esse código depois."],
+["Cara, você não vai acreditar: esse app de jogo que te falei pagou R$ 640 hoje. Saca na hora, olha o comprovante. Entra pelo meu convite que dá bônus pra nós dois.","golpe","Comprovante é fácil de falsificar e o convite rende comissão para quem indica. Jogos como o Tigrinho são programados para você perder."],
+["Correios: seu pacote ficou retido na fiscalização. Pague a taxa de R$ 14,90 para liberar a entrega hoje.","golpe","Imita o aviso dos Correios, mas o endereço termina em .com e não é correios.com.br. Taxa de liberação cobrada por link é golpe."],
+["Compra aprovada de R$ 89,90 no cartão final 5821. Não reconhece? Ligue para o número que está atrás do cartão.","verdade","Sem link e leva você ao canal oficial, que está no seu cartão."],
+["Detran: IPVA 2026 com 15% de desconto para pagamento à vista até sexta. Gere sua guia em:","golpe","O endereço não é .gov.br, e desconto com prazo por SMS é isca. Órgãos públicos usam .gov.br: digite o endereço você mesmo."],
+["Banco: sua senha do app foi alterada hoje às 10:12. Se não foi você, ligue agora para a central pelo número do verso do cartão.","verdade","Tem urgência, mas não traz link nem pede dados: manda você para o canal oficial que já está no cartão."],
+["Olá! Sou recrutador na Tech Norte. Seu perfil combina com uma vaga remota de analista, R$ 4.800. Para o contrato, preciso do seu CPF e de uma conta para um teste de pagamento de R$ 1, que devolvemos.","golpe","Contrato e teste de pagamento antes de qualquer entrevista são desculpa para pegar seus dados e usar sua conta."],
+["Você tem uma oferta de crédito pessoal no app. Veja valor, juros e CET antes de aceitar. Não pedimos pagamento para liberar.","verdade","A oferta está no app oficial, mostra os custos e não pede Pix adiantado."],
+["Olá, aqui é a Marina da imobiliária. Para o aluguel de novembro, use a nossa nova conta: ag. 0001, conta 54321-0, em nome da Imobiliária Rocha Ltda. A anterior foi encerrada. Segue o boleto atualizado.","golpe","Troca de conta ou de boleto por mensagem é o golpe do aluguel. Confirme por ligação, usando um número que você já tinha."],
+["Olá! Sou o Roberto, gerente da sua agência. Há uma compra de R$ 3.900 no seu cartão aguardando a minha liberação. Para cancelar, me informe os 4 últimos dígitos do CPF e o código que acabou de chegar por SMS.","golpe","Gerente de verdade não pede código de SMS: ele dá acesso à sua conta. O susto da compra é só a isca."],
+["Recebemos um pedido para redefinir sua senha. Se foi você, digite o código 704281 no app. Se não foi, ignore esta mensagem: nada será alterado.","verdade","Sem link e sem pedir nada: o código é para você usar no app que abriu, e ignorar não gera risco."],
+["Fala, mano! Troquei de operadora e este é meu número agora. Só salva aí. Se quiser confirmar, é só me ligar.","verdade","Não pede dinheiro, dado nem clique, e ainda convida você a confirmar por ligação. É assim que se confere."],
+["Áudio com a voz do seu filho: ‘Pai, bati o carro. Manda um Pix para o advogado agora e não conta pra mãe.’","golpe","Vozes podem ser copiadas por IA. Desligue e ligue para o próprio filho."],
+["Seu banco: nunca pedimos senha, token ou código por mensagem. Em caso de dúvida, ligue para o número do seu cartão.","verdade","Parece golpe, mas só avisa e leva ao canal oficial, sem link e sem pedir nada."]
+];
+var CK=["Bloqueio de tela ativado","Atualizações do aparelho em dia","Verificação em duas etapas ligada","Apps instalados só da loja oficial","Permissões dos apps revisadas","Localizar aparelho ativado"];
+var CL=["Fácil","Médio","Difícil"];
+var s,app=document.getElementById("app");
+function reset(){s={st:0,i:0,p:0,r:0,c:0,q:0,d:null,l:0,ck:[0,0,0,0,0,0],ans:null,in:1}}
+function norm(t){return t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
+function shift(t,k){return norm(t).replace(/[a-z]/g,function(c){return String.fromCharCode(((c.charCodeAt(0)-97+k)%26+26)%26+97)})}
+function head(n,t){var d="";for(var i=1;i<=4;i++)d+='<i class="'+(i<=n?"on":"")+'"></i>';return '<div class="bar" aria-hidden="true">'+d+'</div><p class="mu">Fase '+n+' de 4</p><h2>'+t+'</h2>'}
+function go(n){s.st=n;render()}
+function render(){
+var h="",m;
+if(s.st===0){
+h='<h1>Blindagem: o jogo</h1><p>Quatro fases para blindar o celular. No final, você descobre o seu nível de blindagem.</p><div class="card"><p>1. Golpe ou verdade? (20 mensagens)<br>2. Criptografia<br>3. Frase-senha<br>4. Checklist do aparelho</p></div><button class="btn" id="go">Começar</button><button class="btn alt" id="rkb">Ver ranking da turma</button>';
+app.innerHTML=h;document.getElementById("go").onclick=function(){go(7)};document.getElementById("rkb").onclick=function(){location.hash="ranking";go(6)};
+}else if(s.st===1){
+if(s.in){h=head(1,"Golpe ou verdade?")+'<p>Vão aparecer 20 mensagens, da mais fácil para a mais difícil. Para cada uma, decida: é golpe ou é verdade?</p><div class="card"><p>Fácil: mensagens 1 a 5<br>Médio: 6 a 10<br>Difícil: 11 a 15<br>Expert: 16 a 20</p><p class="mu">Quanto mais você avança, mais os golpes se disfarçam de coisa verdadeira.</p></div><button class="btn" id="st">Começar as 20 mensagens</button>';app.innerHTML=h;document.getElementById("st").onclick=function(){s.in=0;render()};window.scrollTo(0,0);return}
+m=M[s.i];
+h=head(1,"Golpe ou verdade?")+'<div class="card"><p class="mu">Mensagem '+(s.i+1)+' de 20 · Nível: '+LV[Math.floor(s.i/5)]+'</p>'+shot(s.i)+'</div>';
+if(s.ans===null){h+='<div class="row"><button class="btn" data-a="golpe">GOLPE</button><button class="btn alt" data-a="verdade">VERDADE</button></div>'}
+else{var ok=s.ans===m[1];h+='<div class="fb '+(ok?"ok":"no")+'">'+(ok?"Acertou! ":"Era "+m[1].toUpperCase()+". ")+m[2]+'</div><button class="btn" id="nx">'+(s.i<19?"Próxima mensagem":"Ir para a fase 2")+'</button>'}
+h+='<p class="mu">Pontos: '+s.p+'</p>';
+app.innerHTML=h;
+Array.prototype.forEach.call(app.querySelectorAll("[data-a]"),function(b){b.onclick=function(){s.ans=b.getAttribute("data-a");if(s.ans===m[1])s.p++;render()}});
+var nx=document.getElementById("nx");if(nx)nx.onclick=function(){s.ans=null;if(s.i<19){s.i++;render()}else go(2)};
+}else if(s.st===2){
+var Q=[["Fácil","Cifre a palavra “oi” com 3 casas.","rl"],["Médio","Decifre “fdvd”. A cifra usou 3 casas.","casa"],["Difícil","Decifre “kspti”. Você não sabe quantas casas: teste números até aparecer uma palavra.","golpe"],["Expert","Decifre “mwtyolrpx”. Número desconhecido e palavra longa.","blindagem"]];
+var q=Q[s.q];
+h=head(2,"Criptografia")+'<p>Cada letra anda algumas casas no alfabeto. Use a ferramenta abaixo para resolver 4 desafios, do mais fácil ao mais difícil.</p><div class="card"><p class="mu">Desafio '+(s.q+1)+' de 4 · Nível: '+q[0]+'</p><p class="msg">'+q[1]+'</p>';
+if(s.d===null)h+='<div><label for="ra">Sua resposta</label><input id="ra" autocomplete="off"></div><button class="btn" id="cf">Conferir</button></div>';
+else h+='</div><div class="fb '+(s.d?"ok":"no")+'">'+(s.d?"Acertou!":"A resposta era “"+q[2]+"”.")+'</div><button class="btn" id="nx">'+(s.q<3?"Próximo desafio":"Ir para a fase 3")+'</button>';
+h+='<div class="card"><p class="mu">Ferramenta de cifra</p><div><label for="w">Palavra</label><input id="w" autocomplete="off" value="oi"></div><div><label for="c">Número de casas</label><input id="c" type="number" value="3"></div><div class="row"><button class="btn" id="ci">Cifrar</button><button class="btn alt" id="de">Decifrar</button></div><div class="out" id="o" aria-live="polite"></div></div>';
+app.innerHTML=h;
+function run(sg){var k=parseInt(document.getElementById("c").value,10);if(isNaN(k))k=0;document.getElementById("o").textContent=shift(document.getElementById("w").value,sg*k)}
+document.getElementById("ci").onclick=function(){run(1)};document.getElementById("de").onclick=function(){run(-1)};
+var cf=document.getElementById("cf");if(cf)cf.onclick=function(){s.d=norm(document.getElementById("ra").value.trim())===q[2];if(s.d)s.c++;render()};
+var nx=document.getElementById("nx");if(nx)nx.onclick=function(){s.d=null;if(s.q<3){s.q++;render()}else go(3)};
+}else if(s.st===3){
+function RS(l,v,a){var n=norm(v),r=[];
+if(l===0)r.push([v.length>=8,"Tem 8 caracteres ou mais"]);
+else if(l<3)r.push([v.length>=12,"Tem 12 caracteres ou mais"]);
+else r.push([v.length>=16,"Tem 16 caracteres ou mais"]);
+if(l>=1)r.push([/[0-9]/.test(v),"Tem pelo menos um número"]);
+if(l>=2)r.push([v.length>0&&norm(a).split(/\s+/).filter(function(w){return w.length>=3}).every(function(w){return n.indexOf(w)===-1}),"Não contém o seu nome"]);
+if(l>=3){r.push([/[^A-Za-z0-9\s\u00c0-\u00ff]/.test(v),"Tem um símbolo (como ! ou @)"]);r.push([n.indexOf("senha")===-1&&n.indexOf("123")===-1,"Não contém “senha” nem “123”"])}
+return r}
+h=head(3,"Frase-senha")+'<p class="mu">Nível '+(s.l+1)+' de 4 · '+LV[s.l]+'</p><p>Invente uma frase só sua que cumpra todas as regras deste nível. As regras aumentam a cada nível.</p><div class="card"><div><label for="f">Sua frase-senha</label><input id="f" autocomplete="off"></div></div><div id="rs" style="display:flex;flex-direction:column;gap:8px" aria-live="polite"></div><button class="btn" id="nx">'+(s.l<3?"Próximo nível":"Ir para a fase 4")+'</button>';
+app.innerHTML=h;
+var f=document.getElementById("f");f.value=s.fr||"";
+function upd(){s.fr=f.value;var r=RS(s.l,f.value,PN),k=r.filter(function(x){return x[0]}).length;document.getElementById("nx").disabled=k<r.length;
+document.getElementById("rs").innerHTML=r.map(function(x){return '<div class="rule '+(x[0]?"ok":"")+'"><span>'+(x[0]?"✔":"✘")+'</span>'+x[1]+'</div>'}).join("")+'<p class="mu">'+k+' de '+r.length+' regras cumpridas'+(k<r.length?'. Cumpra todas para avançar.':'')+'</p>'}
+f.oninput=upd;upd();
+document.getElementById("nx").onclick=function(){var r=RS(s.l,f.value,PN);if(!r.every(function(x){return x[0]}))return;s.r++;if(s.l<3){s.l++;render()}else go(4)};
+}else if(s.st===4){
+h=head(4,"Checklist do aparelho")+'<p>Toque no que já está configurado no seu celular. Os itens ficam mais avançados a cada nível. O que ficar em vermelho falta blindar.</p><div id="ck" style="display:flex;flex-direction:column;gap:10px"></div><button class="btn" id="nx">Ver meu nível</button>';
+app.innerHTML=h;
+function dr(){document.getElementById("ck").innerHTML=CK.map(function(t,i){return (i%2===0?'<p class="mu">Nível '+CL[i/2]+'</p>':'')+'<button class="chk '+(s.ck[i]?"ok":"")+'" data-i="'+i+'" aria-pressed="'+(s.ck[i]?"true":"false")+'"><span>'+(s.ck[i]?"✔":"✘")+'</span>'+t+'</button>'}).join("");
+Array.prototype.forEach.call(document.querySelectorAll(".chk"),function(b){b.onclick=function(){var i=+b.getAttribute("data-i");s.ck[i]=s.ck[i]?0:1;dr()}})}
+dr();document.getElementById("nx").onclick=function(){go(5)};
+}else if(s.st===7){
+h='<h1>Qual é o seu nome?</h1><p>Ele aparece no ranking da turma.</p><div class="card"><div><label for="pn">Seu nome ou apelido</label><input id="pn" maxlength="20" autocomplete="off"></div><p class="mu" id="pe" aria-live="polite"></p></div><button class="btn" id="pc">Continuar</button>';
+app.innerHTML=h;var pn=document.getElementById("pn");pn.value=PN;pn.focus();
+function okp(){var v=pn.value.trim().slice(0,20);if(!v){document.getElementById("pe").textContent="Digite seu nome para continuar.";return}PN=v;s.nm=v;s.rn=v;go(1)}
+document.getElementById("pc").onclick=okp;pn.onkeydown=function(e){if(e.key==="Enter")okp()};
+}else if(s.st===6){
+h='<h1>Ranking da turma</h1><p class="mu">Atualiza ao vivo. Mostra as 20 maiores pontuações.</p><div id="rk" style="display:flex;flex-direction:column;gap:12px"></div><div id="adm"></div><button class="btn alt" id="bk">Voltar ao jogo</button>';
+app.innerHTML=h;initBoard();
+document.getElementById("bk").onclick=function(){if(RU){RU();RU=null}location.hash="";go(0)};
+}else{
+var mk=s.ck.reduce(function(a,b){return a+b},0),nv=Math.round((s.p+s.c+s.r+mk)/34*100);
+var t=nv>=80?"Celular blindado.":nv>=50?"Boa base. Falta fechar alguns pontos.":"Há muito para blindar. Comece pelo checklist.";
+h='<h1>Seu nível de blindagem</h1><div class="card"><p class="big">'+nv+'%</p><div class="gauge" role="img" aria-label="Nível '+nv+' por cento"><b style="width:'+nv+'%"></b></div><p>'+t+'</p></div><div class="card"><p>Golpe ou verdade: '+s.p+' de 20</p><p>Criptografia: '+s.c+' de 4</p><p>Frase-senha: '+s.r+' de 4 níveis</p><p>Checklist: '+mk+' de 6 itens</p></div><div id="rk" style="display:flex;flex-direction:column;gap:12px"></div><button class="btn" id="re">Jogar de novo</button>';
+app.innerHTML=h;initRank(s.p+s.c+s.r+mk,nv);document.getElementById("re").onclick=function(){if(RU){RU();RU=null}reset();render()};
+}
+window.scrollTo(0,0)}
+var RU=null;
+function initRank(pts,nv){
+var box=document.getElementById("rk");
+if(!box)return;
+box.innerHTML='<p class="mu">Carregando ranking...</p>';
+function off(m){box.innerHTML='<p class="mu">'+m+'</p>'}
+if(!window.claude||!window.claude.use){off("O ranking não está disponível neste acesso.");return}
+Promise.all([window.claude.use("db"),window.claude.use("user")]).then(function(r){
+var db=r[0],u=r[1];
+if(!db){off("O ranking não está disponível neste acesso.");return}
+return (u?u.id():Promise.resolve(null)).then(function(id){
+box.innerHTML='<h2>Ranking</h2><div id="sv" style="display:flex;flex-direction:column;gap:10px"></div><div class="card" id="lst" aria-live="polite"><p class="mu">Carregando...</p></div>';
+var sv=document.getElementById("sv"),lst=document.getElementById("lst");
+if(!id){sv.innerHTML='<p class="mu">Entre na sua conta do Claude para salvar sua pontuação.</p>'}
+else{
+sv.innerHTML='<p>Quer salvar sua pontuação no ranking da turma?</p><div><label for="rn">Seu apelido no ranking</label><input id="rn" maxlength="20" autocomplete="off"></div><div class="row"><button class="btn" id="rs2">Sim, salvar</button><button class="btn alt" id="rn2">Não salvar</button></div><p class="mu" id="rm" aria-live="polite"></p>';
+var inp=document.getElementById("rn"),bt=document.getElementById("rs2"),rm=document.getElementById("rm");
+inp.value=s.rn||PN||"";document.getElementById("rn2").onclick=function(){sv.innerHTML='<p class="mu">Ok, sua pontuação não foi salva no ranking.</p>'};
+bt.onclick=function(){var nm=inp.value.trim().slice(0,20)||"Anônimo";s.rn=nm;bt.disabled=true;rm.textContent="Salvando...";
+var ref=db.doc("rank/"+id);
+ref.get().then(function(d){var o=d.exists?d.data():null;if(o&&typeof o.pts==="number"&&o.pts>=pts){rm.textContent="Seu recorde no ranking é de "+o.pts+" pontos e foi mantido.";return}
+return ref.set({name:nm,pts:pts,pct:nv,at:Date.now()}).then(function(){rm.textContent="Pontuação salva!"})
+}).catch(function(e){rm.textContent=e&&e.code==="invalid_argument"?"Seu acesso não permite salvar no ranking. Peça permissão de colaborador a quem criou o jogo.":"Não foi possível salvar agora."}).then(function(){bt.disabled=false})}}
+if(RU)RU();
+RU=db.collection("rank").orderBy("pts","desc").limit(10).onSnapshot(function(q){
+lst.textContent="";
+if(q.empty){var e=document.createElement("p");e.className="mu";e.textContent="Ninguém no ranking ainda. Seja o primeiro!";lst.appendChild(e);return}
+q.docs.forEach(function(d,i){var o=d.data()||{},p=document.createElement("p");
+p.textContent=(i+1)+"º  "+(o.name||"Anônimo")+" · "+o.pts+" de 34 pontos"+(d.id===id?" (você)":"");
+if(d.id===id)p.style.fontWeight="700";lst.appendChild(p)})
+},function(){lst.textContent="Não foi possível carregar o ranking."});
+})}).catch(function(){off("O ranking não está disponível neste acesso.")})}
+var PN="";
+var MT=[["sms","BANCO-AVISO","","09:12","banco-libera.net/acesso"],["wa","Rafa (Turma)","online","18:40"],["wa","+55 21 99876-5432","","14:05","",1],["sms","CREDITO-FACIL","","10:31","credito-liberado.top/aprovado"],["sms","CORREIOS","","08:47"],["wa","+55 92 99111-2233","","16:22","",1],["sms","29034","","11:03"],["wa","Dudu","online","19:15","bonus-tigre.com.br/dudu"],["sms","CORREIOS","","12:15","correios-taxas.com/pagar"],["sms","BANCO","","15:26"],["sms","DETRAN","","09:20","detran-ipva26.com.br/guia"],["sms","BANCO","","10:14"],["wa","Tech Norte Recrutamento","online","09:40"],["app","Banco","","12:30"],["wa","Marina Imobiliária","online","10:20"],["wa","Roberto (Gerente)","online","21:02"],["mail","Suporte do app","","10:12"],["wa","+55 92 98765-4321","","22:15","",1],["audio","Filho","online","23:41"],["sms","BANCO","","14:48"]];
+function shot(i){var m=M[i],x=MT[i],c=x[0],tm=x[3],tx=m[0].replace(/((?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:com(?:\.br)?|ly)(?:\/[^\s’”]*)?)/gi,'<span class="lk">$1</span>'),lk=x[4]?'<br><span class="lk">'+x[4]+'</span>':"";
+var ini=/^[+0-9]/.test(x[1])?"?":x[1].replace(/[^A-Za-zÀ-ÿ ]/g,"").split(" ").slice(0,2).map(function(w){return w.charAt(0)}).join("").toUpperCase();
+var hd='<div class="hd"><div class="av">'+ini+'</div><div><div class="nm">'+x[1]+'</div>'+(x[2]?'<div class="sb">'+x[2]+'</div>':'')+'</div></div>';
+var bb='<div class="bb">'+tx+lk+'<div class="tm">'+tm+'</div></div>';
+if(c==="app")return '<div class="ph app"><div class="bb"><b>'+x[1]+'</b> · agora<br>'+tx+'</div></div>';
+if(c==="mail")return '<div class="ph mail">'+hd.replace('</div></div></div>','</div><div class="sb">para mim · '+tm+'</div></div></div>')+'<div class="bd"><div class="bb">'+tx+'</div></div></div>';
+if(c==="audio"){var w="";for(var k=0;k<24;k++)w+='<i style="height:'+(6+((k*7)%14))+'px"></i>';return '<div class="ph">'+hd+'<div class="bd"><div class="bb"><div class="au"><span>▶</span><div class="wv">'+w+'</div><span class="t">0:14</span></div></div><div class="bb"><span style="font-size:13px;color:#667">Transcrição</span><br>'+tx.replace(/^Áudio com a voz do seu filho: /,"")+'<div class="tm">'+tm+'</div></div></div></div>'}
+return '<div class="ph '+(c==="sms"?"sms":"")+'">'+hd+'<div class="bd">'+(x[5]?'<div class="wn">Este número não está nos seus contatos</div>':'')+bb+'</div></div>'}
+function initBoard(){
+var box=document.getElementById("rk");
+function off(m){box.innerHTML='<p class="mu">'+m+'</p>'}
+off("Carregando ranking...");
+if(!window.claude||!window.claude.use){off("O ranking não está disponível neste acesso.");return}
+window.claude.use("db").then(function(db){
+if(s.st!==6)return;
+if(!db){off("O ranking não está disponível neste acesso.");return}
+if(RU)RU();
+window.claude.use("user").then(function(u){return u&&u.isOwner()}).then(function(ow){var ad=document.getElementById("adm");if(!ow||!ad||s.st!==6)return;
+function ask(){ad.innerHTML='<button class="btn alt" id="zr">Zerar ranking</button>';document.getElementById("zr").onclick=function(){ad.innerHTML='<p>Apagar todas as pontuações do ranking? Isso não tem volta.</p><div class="row"><button class="btn" id="zs">Sim, apagar tudo</button><button class="btn alt" id="zn">Cancelar</button></div>';document.getElementById("zn").onclick=ask;document.getElementById("zs").onclick=function(){ad.innerHTML='<p class="mu">Apagando...</p>';db.collection("rank").limit(1000).get().then(function(q){return q.docs.reduce(function(p,d){return p.then(function(){return db.doc("rank/"+d.id).delete()})},Promise.resolve())}).then(function(){ad.innerHTML='<p class="mu">Ranking zerado.</p>'}).catch(function(){ad.innerHTML='<p class="mu">Não foi possível zerar agora.</p>'})}}}
+ask()}).catch(function(){});
+RU=db.collection("rank").orderBy("pts","desc").limit(20).onSnapshot(function(q){
+box.textContent="";
+if(q.empty){var e=document.createElement("p");e.className="mu";e.textContent="Ninguém no ranking ainda.";box.appendChild(e);return}
+var md=["🥇","🥈","🥉"];
+q.docs.forEach(function(d,i){var o=d.data()||{},c=document.createElement("div");c.className="card";c.style.flexDirection="row";c.style.justifyContent="space-between";c.style.alignItems="center";
+var a=document.createElement("p");a.className="msg";a.textContent=(i<3?md[i]:(i+1)+"º")+"  "+(o.name||"Anônimo");
+var b=document.createElement("p");b.className="msg";b.style.fontWeight="700";b.textContent=o.pts+" pts";
+c.appendChild(a);c.appendChild(b);box.appendChild(c)})
+},function(){off("Não foi possível carregar o ranking.")})
+}).catch(function(){off("O ranking não está disponível neste acesso.")})}
+window.addEventListener("hashchange",function(){var w=location.hash==="#ranking";if(w&&s.st!==6)go(6);else if(!w&&s.st===6)go(0)});
+reset();if(location.hash==="#ranking")s.st=6;render();
+</script>
+</body>
+</html>
